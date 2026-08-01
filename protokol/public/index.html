@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protokol Yönetim Sistemi</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="dark-theme">
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i data-lucide="shield-check"></i>
+                <span>Protokol v1.0</span>
+            </div>
+            <nav>
+                <div class="nav-item active" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </div>
+                <div class="nav-item" data-tab="protocols">
+                    <i data-lucide="list"></i> Protokol Listesi
+                </div>
+                <div class="nav-item" data-tab="archive">
+                    <i data-lucide="archive"></i> Arşiv
+                </div>
+                <div class="nav-item" data-tab="add">
+                    <i data-lucide="plus-circle"></i> Yeni Kayıt
+                </div>
+                <div class="nav-item" data-tab="settings">
+                    <i data-lucide="settings"></i> Ayarlar
+                </div>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header>
+                <div class="search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="global-search" placeholder="Firma veya protokol ara...">
+                </div>
+                <div class="user-profile">
+                    <span class="user-name">Ar-Ge Birimi</span>
+                    <div class="avatar">AR</div>
+                </div>
+            </header>
+
+            <section id="dashboard" class="tab-content active">
+                <h1>Sistem Özeti</h1>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon purple"><i data-lucide="file-text"></i></div>
+                        <div class="stat-info">
+                            <span class="label">Toplam Protokol</span>
+                            <span class="value" id="stat-total-count">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i data-lucide="trending-up"></i></div>
+                        <div class="stat-info">
+                            <span class="label">Toplam Hacim (TL)</span>
+                            <span class="value" id="stat-total-revenue">0.00</span>
+                        </div>
+                    </div>
+                    <div class="stat-card chart-container-card">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="recent-section">
+                    <h2>Son Aktiviteler</h2>
+                    <div class="table-container">
+                        <table id="recent-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Firma</th>
+                                    <th>İş Tanımı</th>
+                                    <th>Tutar</th>
+                                    <th>Tarih</th>
+                                    <th>Durum</th>
+                                    <th>İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="protocols" class="tab-content">
+                <div class="section-header">
+                    <h1>Tüm Protokoller</h1>
+                    <div class="filters">
+                        <select id="month-filter">
+                            <option value="">Tüm Aylar</option>
+                            <!-- Months loaded dynamically -->
+                        </select>
+                        <button id="export-excel-btn" class="secondary-btn">
+                            <i data-lucide="download"></i> Excel'e Aktar
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container large-table">
+                    <table id="full-protocol-table">
+                        <thead>
+                            <tr>
+                                <th>Sıra</th>
+                                <th>Büro Kayıt</th>
+                                <th>Protokol No</th>
+                                <th>Bölge</th>
+                                <th>Firma</th>
+                                <th>1. Keşif (H)</th>
+                                <th>KDV (I)</th>
+                                <th>2. Keşif (i)</th>
+                                <th>TÜRKAK (K)</th>
+                                <th>Toplam</th>
+                                <th>Tarih</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="add" class="tab-content">
+                <h1>Yeni Protokol Kaydı</h1>
+                <div class="form-container card">
+                    <form id="protocol-form">
+                        <div class="form-grid">
+                            <!-- Row 1 -->
+                            <div class="form-group">
+                                <label>Sıra No</label>
+                                <input type="number" name="sequence_no" id="sequence_no">
+                            </div>
+                            <div class="form-group">
+                                <label>Büro Kayıt No</label>
+                                <input type="text" name="office_record_no" id="office_record_no">
+                            </div>
+                            <div class="form-group">
+                                <label>Protokol No</label>
+                                <input type="text" name="protocol_no" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Bölge No</label>
+                                <input type="number" name="region_no" id="region_no">
+                            </div>
+
+                            <!-- Row 2 -->
+                            <div class="form-group">
+                                <label>Numuneyi Gönderen</label>
+                                <input type="text" name="sender" id="sender">
+                            </div>
+                            <div class="form-group">
+                                <label>Protokol Bedelini Yatıran Firma</label>
+                                <input type="text" name="firm" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Yapılacak İş</label>
+                                <input type="text" name="job_description" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Protokol İmzalanma Tarihi</label>
+                                <input type="date" name="protocol_date" required>
+                            </div>
+
+                            <!-- Row 3: Calculations -->
+                            <div class="form-group">
+                                <label>Deney 1. Keşif Özeti (H)</label>
+                                <input type="number" step="0.01" name="base_cost" id="base_cost" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>KDV (H * %20) (I)</label>
+                                <input type="number" step="0.01" name="kdv_amount" id="kdv_amount" value="0" readonly
+                                    class="readonly-input">
+                            </div>
+                            <div class="form-group">
+                                <label>KDV'li 1. Keşif (H+I)</label>
+                                <input type="number" step="0.01" name="total_cost_with_kdv" id="total_cost_with_kdv"
+                                    value="0" readonly class="readonly-input">
+                            </div>
+                            <div class="form-group">
+                                <label>KDV'li 2. Keşif Tutarı (i)</label>
+                                <input type="number" step="0.01" name="secondary_keşif_with_kdv"
+                                    id="secondary_keşif_with_kdv" value="0">
+                            </div>
+
+                            <!-- Row 4 -->
+                            <div class="form-group">
+                                <label style="display: flex; justify-content: space-between; align-items: center;">
+                                    TÜRKAK Payı (H * %06) (K)
+                                    <span style="font-size: 0.8em; display: flex; align-items: center; gap: 4px;">
+                                        <input type="checkbox" id="turkak_active" checked
+                                            style="width: auto; margin: 0;"> Hesapla
+                                    </span>
+                                </label>
+                                <input type="number" step="0.01" name="turkak_fee" id="turkak_fee" value="0" readonly
+                                    class="readonly-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Damga Vergisi (H * 0.00948)</label>
+                                <input type="number" step="0.01" name="stamp_tax" id="stamp_tax" value="0" readonly
+                                    class="readonly-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Toplam Miktar (H+K+I+i)</label>
+                                <input type="number" step="0.01" name="total_amount" id="total_amount" value="0"
+                                    readonly class="readonly-input highlight-value">
+                            </div>
+                            <div class="form-group">
+                                <label>Dekont Tarihi</label>
+                                <input type="date" name="payment_date" id="payment_date">
+                            </div>
+
+                            <!-- Row 5 -->
+                            <div class="form-group">
+                                <label>Dekont No</label>
+                                <input type="text" name="receipt_no" id="receipt_no">
+                            </div>
+                            <div class="form-group">
+                                <label>Açıklama</label>
+                                <input type="text" name="bank_info" id="bank_info">
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">PROTOKOLÜ KAYDET</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="archive" class="tab-content">
+                <div class="section-header">
+                    <h1>Protokol Arşivi</h1>
+                    <div class="filters">
+                        <select id="archive-year-filter">
+                            <option value="">Yıl Seçin</option>
+                            <!-- Years will be loaded here -->
+                        </select>
+                        <button id="download-annual-detailed" class="export-btn"
+                            style="background: var(--accent-purple);">
+                            <i data-lucide="file-spreadsheet"></i> Yıllık Detaylı Excel
+                        </button>
+                        <button id="download-annual-simplified" class="export-btn" style="background: #22c55e;">
+                            <i data-lucide="file-spreadsheet"></i> Yıllık Basit Excel
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container large-table">
+                    <table id="archive-protocol-table">
+                        <thead>
+                            <tr>
+                                <th>Sıra</th>
+                                <th>Büro Kayıt</th>
+                                <th>Protokol No</th>
+                                <th>Bölge</th>
+                                <th>Firma</th>
+                                <th>1. Keşif (H)</th>
+                                <th>KDV (I)</th>
+                                <th>2. Keşif (i)</th>
+                                <th>TÜRKAK (K)</th>
+                                <th>Toplam</th>
+                                <th>Tarih</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="settings" class="tab-content">
+                <h1>Sistem Ayarları</h1>
+                <div class="settings-grid">
+                    <div class="card settings-card">
+                        <div class="card-header">
+                            <i data-lucide="archive"></i>
+                            <h3>Yıl Sonu Kapatma</h3>
+                        </div>
+                        <p class="settings-desc">Seçilen yıla ait tüm aktif protokolleri arşivler. Arşivlenen kayıtlar
+                            üzerinde düzenleme yapılamaz.</p>
+                        <div class="form-group">
+                            <label>Kapatılacak Yıl</label>
+                            <input type="number" id="close-year-input" value="2025" placeholder="Örn: 2025">
+                        </div>
+                        <button id="close-year-btn" class="submit-btn delete-btn"
+                            style="background: var(--accent-purple);">DÖNEMİ KAPAT VE ARŞİVLE</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content card large-modal">
+            <h2>Kayıt Düzenle</h2>
+            <form id="edit-form">
+                <input type="hidden" name="id">
+                <div class="form-grid">
+                    <!-- Row 1 -->
+                    <div class="form-group">
+                        <label>Sıra No</label>
+                        <input type="number" name="sequence_no" id="edit_sequence_no">
+                    </div>
+                    <div class="form-group">
+                        <label>Büro Kayıt No</label>
+                        <input type="text" name="office_record_no" id="edit_office_record_no">
+                    </div>
+                    <div class="form-group">
+                        <label>Protokol No</label>
+                        <input type="text" name="protocol_no" required id="edit_protocol_no">
+                    </div>
+                    <div class="form-group">
+                        <label>Bölge No</label>
+                        <input type="number" name="region_no" id="edit_region_no">
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="form-group">
+                        <label>Numuneyi Gönderen</label>
+                        <input type="text" name="sender" id="edit_sender">
+                    </div>
+                    <div class="form-group">
+                        <label>Protokol Bedelini Yatıran Firma</label>
+                        <input type="text" name="firm" required id="edit_firm">
+                    </div>
+                    <div class="form-group">
+                        <label>Yapılacak İş</label>
+                        <input type="text" name="job_description" required id="edit_job_description">
+                    </div>
+                    <div class="form-group">
+                        <label>Protokol İmzalanma Tarihi</label>
+                        <input type="date" name="protocol_date" required id="edit_protocol_date">
+                    </div>
+
+                    <!-- Row 3: Calculations -->
+                    <div class="form-group">
+                        <label>Deney 1. Keşif Özeti (H)</label>
+                        <input type="number" step="0.01" name="base_cost" id="edit_base_cost" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>KDV (H * %20) (I)</label>
+                        <input type="number" step="0.01" name="kdv_amount" id="edit_kdv_amount" value="0" readonly
+                            class="readonly-input">
+                    </div>
+                    <div class="form-group">
+                        <label>KDV'li 1. Keşif (H+I)</label>
+                        <input type="number" step="0.01" name="total_cost_with_kdv" id="edit_total_cost_with_kdv"
+                            value="0" readonly class="readonly-input">
+                    </div>
+                    <div class="form-group">
+                        <label>KDV'li 2. Keşif Tutarı (i)</label>
+                        <input type="number" step="0.01" name="secondary_keşif_with_kdv"
+                            id="edit_secondary_keşif_with_kdv" value="0">
+                    </div>
+
+                    <!-- Row 4 -->
+                    <div class="form-group">
+                        <label style="display: flex; justify-content: space-between; align-items: center;">
+                            TÜRKAK Payı (H * %06) (K)
+                            <span style="font-size: 0.8em; display: flex; align-items: center; gap: 4px;">
+                                <input type="checkbox" id="edit_turkak_active" checked style="width: auto; margin: 0;">
+                                Hesapla
+                            </span>
+                        </label>
+                        <input type="number" step="0.01" name="turkak_fee" id="edit_turkak_fee" value="0" readonly
+                            class="readonly-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Damga Vergisi (H * 0.00948)</label>
+                        <input type="number" step="0.01" name="stamp_tax" id="edit_stamp_tax" value="0" readonly
+                            class="readonly-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Toplam Miktar (H+K+I+i)</label>
+                        <input type="number" step="0.01" name="total_amount" id="edit_total_amount" value="0" readonly
+                            class="readonly-input highlight-value">
+                    </div>
+                    <div class="form-group">
+                        <label>Dekont Tarihi</label>
+                        <input type="date" name="payment_date" id="edit_payment_date">
+                    </div>
+
+                    <!-- Row 5 -->
+                    <div class="form-group">
+                        <label>Dekont No</label>
+                        <input type="text" name="receipt_no" id="edit_receipt_no">
+                    </div>
+                    <div class="form-group">
+                        <label>Açıklama</label>
+                        <input type="text" name="bank_info" id="edit_bank_info">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn">İPTAL</button>
+                    <button type="submit" class="save-btn">GÜNCELLE</button>
+                    <button type="button" class="delete-btn">SİL</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="static/script.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>

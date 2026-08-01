@@ -1,0 +1,10 @@
+﻿--- Inspecting G:\data\backups\yedek_2026_02_17_092212.db ---
+Tables in G: ['users', 'sqlite_sequence', 'samples', 'lab_staff', 'test_durations', 'uploads', 'deleted_samples', 'archived_samples']
+Table: users | Count: 15
+Table: sqlite_sequence | Count: 7
+Table: samples | Count: 134
+Table: lab_staff | Count: 35
+Table: test_durations | Count: 88
+Table: uploads | Count: 0
+Table: deleted_samples | Count: 63
+Table: archived_samples | Count: 17
